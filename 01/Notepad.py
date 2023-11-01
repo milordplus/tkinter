@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import messagebox
+from tkinter import filedialog
 
 
 def change_theme(theme):
@@ -12,6 +14,28 @@ def change_font(font):
     text_field['font'] = fonts[font]['font']
 
 
+def notepad_exit():
+    answer = messagebox.askokcancel('Выход', 'Вы точно хотите выйти?')
+    if answer:
+        root.destroy()
+
+
+def open_file():
+    file_path = filedialog.askopenfilename(title='Выбор файла',
+                                           filetypes=(('Текстовые документы (*.txt)', '*.txt'), ('Все файлы', '*.*')))
+    if file_path:
+        text_field.delete('1.0', END)
+        text_field.insert('1.0', open(file_path, encoding='utf-8').read())
+
+
+def save_file():
+    file_path = filedialog.asksaveasfilename(filetypes=(('Текстовые документы (*.txt)', '*.txt'), ('Все файлы', '*.*')))
+    f = open(file_path, 'w', encoding='utf-8')
+    text = text_field.get('1.0', END)
+    f.write(text)
+    f.close()
+
+
 root = Tk()
 
 root.title('Блокнот')
@@ -22,10 +46,10 @@ main_menu = Menu(root)
 
 # Файл
 file_menu = Menu(main_menu, tearoff=0)
-file_menu.add_command(label='Открыть')
-file_menu.add_command(label='Сохранить')
+file_menu.add_command(label='Открыть', command=open_file)
+file_menu.add_command(label='Сохранить', command=save_file)
 file_menu.add_separator()
-file_menu.add_command(label='Закрыть')
+file_menu.add_command(label='Закрыть', command=notepad_exit)
 root.config(menu=file_menu)
 
 # Вид
